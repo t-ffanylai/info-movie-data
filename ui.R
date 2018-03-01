@@ -20,13 +20,6 @@ ui <- fluidPage(
                   tabPanel("Budget", 
                            br(),
                            h4("This graph plots movie budgets by its revenue."),
-                           br(),
-                           
-                           verbatimTextOutput("budget_summary"),
-                           p("With the given linear correlation coefficient, there is a strong positive correlation 
-                              between the movie budget and revenue. Hence, we can assume that the movie revenue is 
-                              most likely to increase as the budget increases."),
-                           br(),
                            
                            strong("To navigate through the scatterplot:"),
                            br(),
@@ -42,7 +35,13 @@ ui <- fluidPage(
                                                         resetOnNew = TRUE)
                                       ),
                            br(),
-                           verbatimTextOutput("budget_info")
+                           verbatimTextOutput("budget_info"),
+                           
+                           h4("Summary"),
+                           verbatimTextOutput("budget_summary"),
+                           p("With the given linear correlation coefficient, there is a strong positive correlation 
+                             between the movie budget and revenue. Hence, we can assume that the movie revenue is 
+                             most likely to increase as the budget increases.")
                           )
                            
                     )
