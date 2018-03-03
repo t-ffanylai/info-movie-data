@@ -9,6 +9,50 @@ ui <- fluidPage(
   sidebarLayout(
     
     sidebarPanel(
+      tabsetPanel(type = "tabs",
+                  # Widgets to manipulate original language
+                  tabPanel("Original Language",
+                           selectInput('language.choice', "Choose a Language:",
+                                       c("Afrikans" = "af",
+                                         "Arabic" = "ar",
+                                         "Czech" = "cs",
+                                         "Danish" = "da",
+                                         "German" = "de",
+                                         "Greek" = "el",
+                                         "English" = "en",
+                                         "Spanish" = "es",
+                                         "Persian (Farsi)" = "fa",
+                                         "French" = "fr",
+                                         "Hebrew" = "he",
+                                         "Hindi" = "hi",
+                                         "Hungarian" = "hu",
+                                         "Indonesian" = "id",
+                                         "Icelandic" = "is",
+                                         "Italian" = "it",
+                                         "Japanese" = "jp",
+                                         "Korean" = "ko",
+                                         "Kyrgyz" = "ky",
+                                         "Dutch" = "nl",
+                                         "Norwegian" = "no",
+                                         "Polish" = "pl",
+                                         "Pashto, Pushto" = "ps",
+                                         "Portuguese" = "pt",
+                                         "Romanian" = "ro",
+                                         "Russian" = "ru",
+                                         "Slovenian" = "sl",
+                                         "Swedish" = "sv",
+                                         "Tamil" = "ta",
+                                         "Telugu" = "te",
+                                         "Thai" = "th",
+                                         "Turkish" = "tr",
+                                         "Vietnamese" = "vi",
+                                         "Traditional Chinese" = "zh",
+                                         "Simplified Chinese" = "cn"
+                                         
+                                         )
+                                       )
+                            )
+      )
       
     ),
     
@@ -42,7 +86,13 @@ ui <- fluidPage(
                            p("With the given linear correlation coefficient, there is a strong positive correlation 
                              between the movie budget and revenue. Hence, we can assume that the movie revenue is 
                              most likely to increase as the budget increases.")
-                          )
+                          ),
+                  # Plot and info for analyzing original language and revenue
+                  tabPanel("Original Language",
+                           br(),
+                           h4("This graph plots the mean revenue of movies by original language."),
+                           verbatimTextOutput("language.summary")
+                           )
                            
                     )
     )

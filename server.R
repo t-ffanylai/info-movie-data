@@ -71,4 +71,35 @@ server <- function(input, output) {
     }
   })
   
+  # filters the data by original language to find the mean and median revenue of each language
+  language.stats <- reactive ({
+    language.summary <- group_by(movie.data, original_language) %>%
+      summarize(
+        mean = mean(revenue),
+        median = median(revenue),
+        n = n()
+      ) %>%
+      filter(original_language == input$language.choice)
+    return(paste0("There were ", language.summary[1,4], " movies filmed in this language.",
+                  " The mean for the selected language was ", language.summary[1,2], 
+                  ". The median revenue for the selected language was ", language.summary[1,3],
+                  ". The mean and median are measured in U.S. dollar."))
+  })
+  
+  # renders the revenue summary of the selected language
+  output$language.summary <- renderText({
+    return(language.stats())
+  })
+  
+  # filters the data by the input original language to plot on a graph
+  by.language <- reactive ({
+    chosen.language <- movie.data %>%
+      filter(original_language == "zh") %>%
+      select(original_language, title, revenue)
+    return(chosen.language)
+  })
+  
+  output$language.plot <- renderPlot({
+    
+  })
 }
