@@ -71,19 +71,15 @@ server <- function(input, output) {
     }
   })
   
-  # filters the data by original language to find the mean and median revenue of each language
+  # filters the overall data by original language to find the mean and median revenue of each language
+  # as well as number of movies filmed in that language
   language.stats <- reactive ({
-    language.summary <- group_by(movie.data, original_language) %>%
-      summarize(
-        mean = mean(revenue),
-        median = median(revenue),
-        n = n()
-      ) %>%
+    language.summary <- by.language() %>%
       filter(original_language == input$language.choice)
-    return(paste0("There were ", language.summary[1,4], " movies filmed in this language.",
-                  " The mean for the selected language was ", language.summary[1,2], 
-                  ". The median revenue for the selected language was ", language.summary[1,3],
-                  ". The mean and median are measured in U.S. dollar."))
+    return(paste0("There was ", language.summary[1,4], " movie(s) filmed in this language", sep = "\n",
+                  "The mean for the selected language was $", language.summary[1,2], sep = "\n",
+                  "The median revenue for the selected language was $", language.summary[1,3], sep ="\n",
+                  "The mean and median are measured in U.S. dollar."))
   })
   
   # renders the revenue summary of the selected language
@@ -91,15 +87,31 @@ server <- function(input, output) {
     return(language.stats())
   })
   
-  # filters the data by the input original language to plot on a graph
+  # filters the data by the input original language for its mean and median of revenue as well as count 
+  # and orders it by number of movies created in that language
   by.language <- reactive ({
-    chosen.language <- movie.data %>%
-      filter(original_language == "zh") %>%
-      select(original_language, title, revenue)
-    return(chosen.language)
+    filter.data <- group_by(movie.data, original_language) %>%
+      summarize(
+        mean = mean(revenue),
+        median = median(revenue),
+        n = n()
+      ) %>%
+      arrange(-n)
+    return(filter.data)
   })
   
+  # renders a plot to show revenue by original language
   output$language.plot <- renderPlot({
-    
+    plot.lang <- by.language() %>%
+      head(input$language.num) %>%
+      select(original_language, input$language.type)
+    names(plot.lang)[2] <- "lang.type"
+    plot.bar <- ggplot(data = plot.lang, aes(x=original_language, y=lang.type)) +
+      labs(title = "Movie Language by Revenue",
+           x = "original language",
+           y = input$language.type) +
+      geom_bar(stat="identity")
+    return(plot.bar)
   })
+  
 }
