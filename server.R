@@ -4,7 +4,7 @@ library("shiny")
 library("ggplot2")
 library("maps")
 library("maptools")
-
+library("ISOcodes")
 
 # Reads movie data from tmdb
 setwd('~/info-movie-data')
@@ -77,7 +77,7 @@ server <- function(input, output) {
     language.summary <- by.language() %>%
       filter(original_language == input$language.choice)
     return(paste0("There was ", language.summary[1,4], " movie(s) filmed in this language", sep = "\n",
-                  "The mean for the selected language was $", language.summary[1,2], sep = "\n",
+                  "The mean revenue for the selected language was $", language.summary[1,2], sep = "\n",
                   "The median revenue for the selected language was $", language.summary[1,3], sep ="\n",
                   "The mean and median are measured in U.S. dollar."))
   })
@@ -90,13 +90,20 @@ server <- function(input, output) {
   # filters the data by the input original language for its mean and median of revenue as well as count 
   # and orders it by number of movies created in that language
   by.language <- reactive ({
+    # import language iso codes
+    lang.iso <- ISOcodes::ISO_639_2 %>% 
+      select(Alpha_2, Name)
     filter.data <- group_by(movie.data, original_language) %>%
       summarize(
         mean = mean(revenue),
         median = median(revenue),
         n = n()
       ) %>%
-      arrange(-n)
+      arrange(-n) %>%
+      left_join(lang.iso, by = c("original_language" = "Alpha_2"))
+    # change cn to reflect cantonese and xx to reflect artistic language
+    filter.data[9,5] <- "Cantonese"
+    filter.data[37, 5] <- "Artistic Language"
     return(filter.data)
   })
   
@@ -104,9 +111,9 @@ server <- function(input, output) {
   output$language.plot <- renderPlot({
     plot.lang <- by.language() %>%
       head(input$language.num) %>%
-      select(original_language, input$language.type)
+      select(Name, input$language.type)
     names(plot.lang)[2] <- "lang.type"
-    plot.bar <- ggplot(data = plot.lang, aes(x=original_language, y=lang.type)) +
+    plot.bar <- ggplot(data = plot.lang, aes(x=Name, y=lang.type)) +
       labs(title = "Movie Language by Revenue",
            x = "original language",
            y = input$language.type) +
@@ -114,4 +121,8 @@ server <- function(input, output) {
     return(plot.bar)
   })
   
+  output$language.info <- renderPrint({
+    hover.y <- input$language.hover$y
+    return(cat("The revenue at the point you are hovering at is $", hover.y, sep = ""))
+  })
 }
