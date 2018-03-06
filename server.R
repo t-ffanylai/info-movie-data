@@ -7,7 +7,6 @@ library("maptools")
 library("ISOcodes")
 
 # Reads movie data from tmdb
-setwd('~/info-movie-data')
 movie.data <- read.csv('./data/tmdb_5000_movies.csv', stringsAsFactors = FALSE)
 
 # Defines server for the movie revenue data app
@@ -125,4 +124,73 @@ server <- function(input, output) {
     hover.y <- input$language.hover$y
     return(cat("The revenue at the point you are hovering at is $", hover.y, sep = ""))
   })
+  
+  # Renders scatter plot to show revenue by movie popularity
+  output$pop.plot <- renderPlot({
+    pop.mov.filter <- movie.data %>%
+      filter(popularity > input$pop[1] & popularity < input$pop[2]) %>%
+      filter(revenue > input$rev[1] & revenue < input$rev[2])
+    ggplot(pop.mov.filter, mapping = aes(x = popularity, y = revenue)) + 
+      geom_jitter() +
+      geom_smooth(mapping = aes(x = popularity, y = revenue), color = "blue") +
+      coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
+      labs(title = "Movie Popularity by Revenue", 
+           x = "Popularity",  
+           y = "Revenue (in US Dollars)") + 
+      theme(title = element_text(size=16))
+
+  })
+  
+  # Calcuates mean, median, range, and linear correlation of revenue and popularity data.
+  # Filters the data based on widgets. Returns text of summarized statistics.
+  output$pop.summary <- renderText({
+    pop.mov.filter <- movie.data %>%
+      filter(popularity > input$pop[1] & popularity < input$pop[2]) %>%
+      filter(revenue > input$rev[1] & revenue < input$rev[2])
+    
+    #Calcualtes popularity and revenue statistics
+    mean.pop <- mean(pop.mov.filter$popularity)
+    mean.budget <- mean(pop.mov.filter$budget)
+    median.pop <- median(pop.mov.filter$popularity)
+    median.budget <- median(pop.mov.filter$budget)
+    range.pop <- range(pop.mov.filter$popularity)
+    range.budget <- range(pop.mov.filter$budget)
+    pop.budget.cor <- cor(pop.mov.filter$popularity, pop.mov.filter$revenue)
+    
+    return(paste0("Movie budgets range from ", range.budget[1], " to ", range.budget[2], ".", sep = "\n",
+                  "Movie popularity ranges from ", range.pop[1], " to ", round(range.pop[2], 0), ".", sep = "\n",
+                  "The average budget amongst all movies is ", round(mean.budget, 0), ".", sep = "\n",
+                  "The average popularity amongst all movies is ", round(mean.pop, 0), ".", sep = "\n",
+                  "The median budget amongst all movies is ", round(median.budget, 0), ".", sep = "\n",
+                  "The median popularity amongst all movies is ", round(median.pop, 0), ".", sep = "\n",
+                  "The linear correlation between movie popularity and budget is ", round(pop.budget.cor, 3), "."))
+  })
+  
+  
+  # Creates brush and double-click interactive feature of map, zooms in on brushed area
+  # of visualization
+  observeEvent(input$pop_dblclick, {
+    brush <- input$pop_brush
+    if (!is.null(brush)) {
+      ranges$x <- c(brush$xmin, brush$xmax)
+      ranges$y <- c(brush$ymin, brush$ymax)
+      
+    } else {
+      ranges$x <- NULL
+      ranges$y <- NULL
+    }
+  })
+  
+  # Creates interactive hover feature of map, displays movie title, popularity, and revenue values
+  output$pop.info <- renderPrint({
+    filtered.pop <- select(movie.data, title, popularity, revenue)
+    pop.filtered.data <- nearPoints(filtered.pop, input$pop_hover, 
+                                       maxpoints = 1,
+                                       xvar = "popularity", yvar = "revenue")
+    
+    if(dim(pop.filtered.data[0]) != 0) {
+      print(pop.filtered.data, row.names = FALSE)
+    }
+  })
+  
 }

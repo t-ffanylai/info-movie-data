@@ -62,7 +62,17 @@ ui <- fluidPage(
                                          "Artistic Language" = "xx"
                                        )
                             )
-                          )
+                          ),
+                  # Creates widgets to manipulate popularity vs revenue visualization
+                  conditionalPanel(condition = "input.conditionedPanels==1",
+                           "Popularity",
+                           h4("Filter by:"),
+                           # Filter by popularity value
+                           sliderInput("pop", "Popularity", min = 0, max = 1000, value = c(min, max)),
+                           
+                           # Filter by revenue value
+                           sliderInput("rev", "Revenue", min = 0, max = 4000000000, value = c(min, max))
+                  )
       )
       
     ),
@@ -126,9 +136,48 @@ ui <- fluidPage(
                            h4("Viewing statistics for a specific language."),
                            p("To view individual statistics for a specific language, select the language you want to view from the dropdown box on the left."),
                            verbatimTextOutput("language.summary")
-                           )
+                           ),
+                  
+                  # Interactive scatterplot and summary information of movie popularity and revenue 
+                  tabPanel("Popularity", 
+                           value = 1, 
+                           br(),
+                           h4("This graph plots the revenue of movies by overall popularity."),
+                           br(),
                            
-                    )
+                           # Describes interactive map features
+                           h6("Map Features:"),
+                           p(" - The left panel has two slider widgets that allow you to manipulate the range of both the
+                              movie revenue and popularity. When you change the range, the summary data (mean, median, range, etc.)
+                              will also change, reflecting the statistics of the data in the specified range."),
+                           em(" - Hover over individual points on the plot to see the specific revenue and popularity information. 
+                               If you wish to take a closer look, brush and double-click over the area you want to zoom-in on."),
+                            
+                           # Creates scatterplot with interactive features 
+                           plotOutput("pop.plot",                                       
+                                      dblclick = "pop_dblclick",
+                                      hover = "pop_hover",
+                                      brush = brushOpts(id = "pop_brush",
+                                                        resetOnNew = TRUE)),
+                           br(),
+                           # Prints summary statistics and over analysis of data and visualization
+                            verbatimTextOutput("pop.info"),
+                            em("Overall popularity is a rating assigned to each movie based on other statistical factors of the film. When calculating 
+                               movie popularity, factors such as average rating for the movie, number of votes for the movie, and the average overall 
+                               vote for the movie are taken into account."),
+                            
+                          h4("Summary"),
+                          verbatimTextOutput("pop.summary"),
+                          
+                          p("Looking at the graph, we see the line of best fit has a slight parabola shape. This indicates that the relationship
+                            between movie popularity and revenue peaks at a certain point, and then becomes irrelevant. The linear correlation between 
+                            revenue and popularity is around 0.6, meaning that the relationship between the two variables is moderately positive. By looking at the graph, 
+                            the outliers indicate that movies with high revenues can be less popular and the same in 
+                            reverse, movies with low revenues can have high popularity. However, the overall trend of the graph indicates that revenue and 
+                            popularity are positively correlated, so as popularity increases, so should revenue.")
+                           
+                    ), id = "conditionedPanels"
     )
   )
+)
 )
