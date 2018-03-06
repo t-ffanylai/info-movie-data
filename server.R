@@ -7,6 +7,7 @@ library("maptools")
 library("ISOcodes")
 
 # Reads movie data from tmdb
+setwd('~/info-movie-data')
 movie.data <- read.csv('./data/tmdb_5000_movies.csv', stringsAsFactors = FALSE)
 
 # Defines server for the movie revenue data app
