@@ -9,70 +9,67 @@ ui <- fluidPage(
   sidebarLayout(
     
     sidebarPanel(
-      tabsetPanel(type = "tabs",
-                  # Widgets to manipulate original language
-                  tabPanel("Original Language",
-                           h4(strong("Bar Chart Options")),
-                           # select whether you want to view the mean or median by language
-                           radioButtons('language.type', 'Choose a Type of Revenue to View:',
-                                        c("Mean" = "mean",
-                                          "Median" = "median")
-                                        ),
-                           # select how many languages you want to view
-                           numericInput('language.num', 'Select a Number of Languages to View:',
-                                        5, min = 1, max = 37),
-                           h4(strong("Individual Summary Options")),
-                           # select the language you want to view
-                           selectInput('language.choice', "Choose a Language:",
-                                       c("Afrikans" = "af",
-                                         "Arabic" = "ar",
-                                         "Czech" = "cs",
-                                         "Danish" = "da",
-                                         "German" = "de",
-                                         "Greek" = "el",
-                                         "English" = "en",
-                                         "Spanish" = "es",
-                                         "Persian (Farsi)" = "fa",
-                                         "French" = "fr",
-                                         "Hebrew" = "he",
-                                         "Hindi" = "hi",
-                                         "Hungarian" = "hu",
-                                         "Indonesian" = "id",
-                                         "Icelandic" = "is",
-                                         "Italian" = "it",
-                                         "Japanese" = "jp",
-                                         "Korean" = "ko",
-                                         "Kyrgyz" = "ky",
-                                         "Dutch" = "nl",
-                                         "Norwegian" = "no",
-                                         "Polish" = "pl",
-                                         "Pashto, Pushto" = "ps",
-                                         "Portuguese" = "pt",
-                                         "Romanian" = "ro",
-                                         "Russian" = "ru",
-                                         "Slovenian" = "sl",
-                                         "Swedish" = "sv",
-                                         "Tamil" = "ta",
-                                         "Telugu" = "te",
-                                         "Thai" = "th",
-                                         "Turkish" = "tr",
-                                         "Vietnamese" = "vi",
-                                         "Mandarin" = "zh",
-                                         "Cantonese" = "cn",
-                                         "Artistic Language" = "xx"
-                                       )
-                            )
-                          ),
-                  # Creates widgets to manipulate popularity vs revenue visualization
-                  conditionalPanel(condition = "input.conditionedPanels==1",
-                           "Popularity",
-                           h4("Filter by:"),
-                           # Filter by popularity value
-                           sliderInput("pop", "Popularity", min = 0, max = 1000, value = c(min, max)),
-                           
-                           # Filter by revenue value
-                           sliderInput("rev", "Revenue", min = 0, max = 4000000000, value = c(min, max))
-                  )
+      conditionalPanel(condition = "input.conditionedPanels==2",  
+       h4(strong("Bar Chart Options")),
+       # select whether you want to view the mean or median by language
+       radioButtons('language.type', 'Choose a Type of Revenue to View:',
+                    c("Mean" = "mean",
+                      "Median" = "median")
+                    ),
+       # select how many languages you want to view
+       numericInput('language.num', 'Select a Number of Languages to View:',
+                    5, min = 1, max = 37),
+       h4(strong("Individual Summary Options")),
+       # select the language you want to view
+       selectInput('language.choice', "Choose a Language:",
+                   c("Afrikans" = "af",
+                     "Arabic" = "ar",
+                     "Czech" = "cs",
+                     "Danish" = "da",
+                     "German" = "de",
+                     "Greek" = "el",
+                     "English" = "en",
+                     "Spanish" = "es",
+                     "Persian (Farsi)" = "fa",
+                     "French" = "fr",
+                     "Hebrew" = "he",
+                     "Hindi" = "hi",
+                     "Hungarian" = "hu",
+                     "Indonesian" = "id",
+                     "Icelandic" = "is",
+                     "Italian" = "it",
+                     "Japanese" = "jp",
+                     "Korean" = "ko",
+                     "Kyrgyz" = "ky",
+                     "Dutch" = "nl",
+                     "Norwegian" = "no",
+                     "Polish" = "pl",
+                     "Pashto, Pushto" = "ps",
+                     "Portuguese" = "pt",
+                     "Romanian" = "ro",
+                     "Russian" = "ru",
+                     "Slovenian" = "sl",
+                     "Swedish" = "sv",
+                     "Tamil" = "ta",
+                     "Telugu" = "te",
+                     "Thai" = "th",
+                     "Turkish" = "tr",
+                     "Vietnamese" = "vi",
+                     "Mandarin" = "zh",
+                     "Cantonese" = "cn",
+                     "Artistic Language" = "xx"
+                   )
+       )
+       ),
+      # Creates widgets to manipulate popularity vs revenue visualization
+      conditionalPanel(condition = "input.conditionedPanels==1",
+         "Popularity",
+         h4("Filter by:"),
+         # Filter by popularity value
+         sliderInput("pop", "Popularity", min = 0, max = 1000, value = c(min, max)),
+         
+         # Filter by revenue value
+         sliderInput("rev", "Revenue", min = 0, max = 4000000000, value = c(min, max))
       )
       
     ),
@@ -111,6 +108,7 @@ ui <- fluidPage(
                   
                   # Plot and info for analyzing original language and revenue
                   tabPanel("Original Language",
+                           value = 2,
                            br(),
                            h4("This graph plots the revenue of movies by original language."),
                            plotOutput("language.plot", 
@@ -136,7 +134,7 @@ ui <- fluidPage(
                            h4("Viewing statistics for a specific language."),
                            p("To view individual statistics for a specific language, select the language you want to view from the dropdown box on the left."),
                            verbatimTextOutput("language.summary")
-                           ),
+                           ), 
                   
                   # Interactive scatterplot and summary information of movie popularity and revenue 
                   tabPanel("Popularity", 
