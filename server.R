@@ -2,13 +2,18 @@
 library("dplyr")
 library("shiny")
 library("ggplot2")
-library("maps")
 library("maptools")
-
+library("purrr")
+library("tidyr")
 
 # Reads movie data from tmdb
-setwd('~/info-movie-data')
 movie.data <- read.csv('./data/tmdb_5000_movies.csv', stringsAsFactors = FALSE)
+movie.countries <- movie.data[c("original_title", "production_countries", "revenue")]
+
+# Parses JSON format of the production countries into a dataframe
+movie.countries <- movie.countries %>% 
+  mutate(production_countries = map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
+  unnest() 
 
 # Defines server for the movie revenue data app
 server <- function(input, output) {
