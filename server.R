@@ -27,7 +27,7 @@ server <- function(input, output) {
     ggplot(movie.data, aes(x = budget, y = revenue)) + 
       geom_jitter() +
       coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
-      geom_smooth(mapping = aes(x = budget, y = revenue), color = "RED") +
+      geom_smooth(mapping = aes(x = budget, y = revenue), color = "#21D17A") +
       labs(title = "Movie Budget by Revenue", 
            x = "Budget (in US Dollars)",  
            y = "Revenue (in US Dollars)") + 
@@ -133,7 +133,7 @@ server <- function(input, output) {
       labs(title = "Movie Language by Revenue",
            x = "original language",
            y = input$language.type) +
-      geom_bar(stat="identity", fill = "#21D17A", color="black") + 
+      geom_bar(stat="identity", fill = "#21D17A") + 
       geom_text(aes(label=lang.type), vjust=2, color="black", size=3, hjust=0.5) +
       theme(panel.background = element_blank(),
             panel.grid.minor = element_blank(),
@@ -171,7 +171,7 @@ server <- function(input, output) {
       filter(revenue > input$rev[1] & revenue < input$rev[2])
     ggplot(pop.mov.filter, mapping = aes(x = popularity, y = revenue)) + 
       geom_jitter() +
-      geom_smooth(mapping = aes(x = popularity, y = revenue), color = "blue") +
+      geom_smooth(mapping = aes(x = popularity, y = revenue), color = "#21D17A") +
       coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
       labs(title = "Movie Popularity by Revenue", 
            x = "Popularity",  
