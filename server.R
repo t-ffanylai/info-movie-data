@@ -2,13 +2,22 @@
 library("dplyr")
 library("shiny")
 library("ggplot2")
-library("maps")
 library("maptools")
+<<<<<<< HEAD
 library("ISOcodes")
+=======
+library("purrr")
+library("tidyr")
+>>>>>>> jiyun
 
 # Reads movie data from tmdb
-setwd('~/info-movie-data')
 movie.data <- read.csv('./data/tmdb_5000_movies.csv', stringsAsFactors = FALSE)
+movie.countries <- movie.data[c("original_title", "production_countries", "revenue")]
+
+# Parses JSON format of the production countries into a dataframe
+movie.countries <- movie.countries %>% 
+  mutate(production_countries = map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
+  unnest() 
 
 # Defines server for the movie revenue data app
 server <- function(input, output) {
@@ -71,6 +80,7 @@ server <- function(input, output) {
     }
   })
   
+<<<<<<< HEAD
   # filters the overall data by original language to find the mean and median revenue of each language
   # as well as number of movies filmed in that language
   language.stats <- reactive ({
@@ -194,4 +204,6 @@ server <- function(input, output) {
     }
   })
   
+=======
+>>>>>>> jiyun
 }
