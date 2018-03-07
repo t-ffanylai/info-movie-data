@@ -24,7 +24,10 @@ server <- function(input, output) {
   
   # Creates a scatterplot of the movie budget by its revenue and draws a best line of fit
   output$budget.plot <- renderPlot({
-    ggplot(movie.data, aes(x = budget, y = revenue)) + 
+    budget.movie.filter <- movie.data %>%
+      filter(budget > input$budget[1] & budget < input$budget[2]) %>%
+      filter(revenue > input$revenue[1] & revenue < input$revenue[2])
+    ggplot(budget.movie.filter, aes(x = budget, y = revenue)) + 
       geom_jitter() +
       coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
       geom_smooth(mapping = aes(x = budget, y = revenue), color = "#21D17A") +

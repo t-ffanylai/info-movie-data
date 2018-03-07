@@ -15,20 +15,18 @@ ui <- dashboardPage(skin = "green",
   dashboardHeader(title = "Movies"),
   dashboardSidebar(disable = TRUE),
   dashboardBody(
-    # Boxes need to be put in a row (or column)
     fluidRow(
+      
       ##################
       ####  Graphs  ####
       ##################
       
       # Creates a box with tabs for the interactive graphs
       tabBox(
-        title = icon("chart-line"),
-        id = "graphName", height = "250px", 
+        id = "graphName", height = "500px", 
 
         # Scatterplot of movie budget vs. revenue
-        tabPanel(status = "success",
-                 "Budget", 
+        tabPanel("Budget", 
                  "This graph plots movie budgets by its revenue.", 
                  br(),
                  br(),
@@ -43,8 +41,7 @@ ui <- dashboardPage(skin = "green",
                 ),
         
         # Scatterplot of popularity vs. revenue
-        tabPanel(status = "success",
-                 "Popularity", 
+        tabPanel("Popularity", 
                  "This graph plots the revenue of movies by overall popularity.",
                  br(),
                  br(),
@@ -59,8 +56,7 @@ ui <- dashboardPage(skin = "green",
                 ),
         
         # Bar graph of original language vs. revenue
-        tabPanel(status = "success",
-                 "Original Language", 
+        tabPanel("Original Language", 
                  "This graph plots the revenue of movies by original language.",
                  br(),
                  br(),
@@ -266,7 +262,7 @@ ui <- dashboardPage(skin = "green",
       ),
       
       ###################
-      ####  Widgets  ####
+      ####  Summary  ####
       ###################
       
       # Creates a box of statistical summary and analysis of budget vs. revenue plot
@@ -276,9 +272,9 @@ ui <- dashboardPage(skin = "green",
             strong("Summary & Analysis: "),
             verbatimTextOutput("budget_summary"),
             br(),
-            "With the given linear correlation coefficient, there is a strong positive correlation 
-             between the movie budget and revenue. Hence, we can assume that the movie revenue is 
-             most likely to increase as the budget increases."
+            "In an overview, with the linear correlation coefficient of 0.705, 
+             there is a strong positive correlation between the movie budget and revenue. 
+             Hence, we can assume that the movie revenue is most likely to increase as the budget increases."
         )
       ),
       
@@ -318,8 +314,6 @@ ui <- dashboardPage(skin = "green",
              original language and revenue can therefore be considered a statistically significant factor."
         )
       )
-      
-      
     )
   )
 )
