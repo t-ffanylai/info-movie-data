@@ -2,16 +2,20 @@
 library("dplyr")
 library("shiny")
 library("ggplot2")
-library("maps")
 library("maptools")
+library("jsonlite")
 library("ISOcodes")
 library("purrr")
-library("jsonlite")
-library("tidyverse")
+library("tidyr")
 
 # Reads movie data from tmdb
-setwd('~/info-movie-data')
 movie.data <- read.csv('./data/tmdb_5000_movies.csv', stringsAsFactors = FALSE)
+movie.countries <- movie.data[c("original_title", "production_countries", "revenue")]
+
+# Parses JSON format of the production countries into a dataframe
+movie.countries <- movie.countries %>% 
+  mutate(production_countries = map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
+  unnest() 
 
 # Reads movie data from tmdb
 movie.countries <- movie.data[c("original_title", "production_countries", "revenue")]
@@ -27,10 +31,13 @@ server <- function(input, output) {
   
   # Creates a scatterplot of the movie budget by its revenue and draws a best line of fit
   output$budget.plot <- renderPlot({
-    ggplot(movie.data, aes(x = budget, y = revenue)) + 
+    budget.movie.filter <- movie.data %>%
+      filter(budget > input$budget[1] & budget < input$budget[2]) %>%
+      filter(revenue > input$revenue[1] & revenue < input$revenue[2])
+    ggplot(budget.movie.filter, aes(x = budget, y = revenue)) + 
       geom_jitter() +
       coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
-      geom_smooth(mapping = aes(x = budget, y = revenue), color = "RED") +
+      geom_smooth(mapping = aes(x = budget, y = revenue), color = "#21D17A") +
       labs(title = "Movie Budget by Revenue", 
            x = "Budget (in US Dollars)",  
            y = "Revenue (in US Dollars)") + 
@@ -55,18 +62,27 @@ server <- function(input, output) {
   # Returns a summary of the movie data, including the mean, average, 
   # and linear correlation coefficient of the budget and revenue
   output$budget_summary <- renderText({
-    summary <- summarize(movie.data,
+    budget.movie.filter <- movie.data %>%
+      filter(budget > input$budget[1] & budget < input$budget[2]) %>%
+      filter(revenue > input$revenue[1] & revenue < input$revenue[2])
+    summary <- summarize(budget.movie.filter,
                          cor = round(cor(budget, revenue), 3),
                          mean.budget = round(mean(budget), 2),
                          mean.revenue = round(mean(revenue), 2),
                          median.budget = round(median(budget), 2),
                          median.revenue = round(median(revenue), 2)
                          )
-    return(paste0("The average budget is $", summary$mean.budget, ".", sep = "\n",
-                  "The average revenue is $", summary$mean.revenue, ".", sep = "\n",
-                  "The median budget is $", summary$median.budget, ".", sep = "\n",
-                  "The median revenue is $", summary$median.revenue, ".", sep = "\n",
-                  "The linear correlation between movie budget and revenue is ", summary$cor, "."))
+    
+    range.budget <- range(budget.movie.filter$budget)
+    range.revenue <- range(budget.movie.filter$revenue)
+    
+    return(paste0("Movie budgets range from $", range.budget[1], " to $", range.budget[2], sep = "\n",
+                  "Movie revenue range from $", range.revenue[1], " to $", range.revenue[2], sep = "\n",
+                  "The average budget is $", summary$mean.budget, sep = "\n",
+                  "The average revenue is $", summary$mean.revenue, sep = "\n",
+                  "The median budget is $", summary$median.budget, sep = "\n",
+                  "The median revenue is $", summary$median.revenue, sep = "\n",
+                  "The linear correlation between movie budget and revenue is ", summary$cor))
   })
   
   # Prints information about the movie title, budget, and revenue of the hovered point 
@@ -127,10 +143,32 @@ server <- function(input, output) {
       labs(title = "Movie Language by Revenue",
            x = "original language",
            y = input$language.type) +
-      geom_bar(stat="identity")
+      geom_bar(stat="identity", fill = "#21D17A") + 
+      geom_text(aes(label=lang.type), vjust=2, color="black", size=3, hjust=0.5) +
+      theme(panel.background = element_blank(),
+            panel.grid.minor = element_blank(),
+            axis.ticks = element_blank(),
+            axis.line = element_line(color=NA),
+            axis.line.x = element_line(color="grey80"))
     return(plot.bar)
   })
   
+  # find the p value for original language
+  p.lang <- reactive ({
+    lang.data <- movie.data %>%
+      select(original_language, revenue)
+    names(lang.data)[1] <- "Language"
+    names(lang.data)[2] <- "type" 
+    p.value <- aov(type ~ Language, data = lang.data)
+    return(summary(p.value))
+  })
+  
+  # render the text for p value
+  output$p.lang <- renderPrint({
+    return(p.lang()) 
+  })
+  
+  # render what the revenue at the point is
   output$language.info <- renderPrint({
     hover.y <- input$language.hover$y
     return(cat("The revenue at the point you are hovering at is $", hover.y, sep = ""))
@@ -143,7 +181,7 @@ server <- function(input, output) {
       filter(revenue > input$rev[1] & revenue < input$rev[2])
     ggplot(pop.mov.filter, mapping = aes(x = popularity, y = revenue)) + 
       geom_jitter() +
-      geom_smooth(mapping = aes(x = popularity, y = revenue), color = "blue") +
+      geom_smooth(mapping = aes(x = popularity, y = revenue), color = "#21D17A") +
       coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE) +
       labs(title = "Movie Popularity by Revenue", 
            x = "Popularity",  
@@ -168,13 +206,15 @@ server <- function(input, output) {
     range.budget <- range(pop.mov.filter$budget)
     pop.budget.cor <- cor(pop.mov.filter$popularity, pop.mov.filter$revenue)
     
-    return(paste0("Movie budgets range from ", range.budget[1], " to ", range.budget[2], ".", sep = "\n",
-                  "Movie popularity ranges from ", range.pop[1], " to ", round(range.pop[2], 0), ".", sep = "\n",
-                  "The average budget amongst all movies is ", round(mean.budget, 0), ".", sep = "\n",
-                  "The average popularity amongst all movies is ", round(mean.pop, 0), ".", sep = "\n",
-                  "The median budget amongst all movies is ", round(median.budget, 0), ".", sep = "\n",
-                  "The median popularity amongst all movies is ", round(median.pop, 0), ".", sep = "\n",
-                  "The linear correlation between movie popularity and budget is ", round(pop.budget.cor, 3), "."))
+    return(paste0("Movie budgets range from $", range.budget[1], " to $", range.budget[2], sep = "\n",
+                  "Movie popularity range from $", range.pop[1], " to $", round(range.pop[2], 0), sep = "\n",
+                  "The average budget amongst all movies is $", round(mean.budget, 0), sep = "\n",
+                  "The average popularity amongst all movies is $", round(mean.pop, 0), sep = "\n",
+                  "The median budget amongst all movies is $", round(median.budget, 0), sep = "\n",
+                  "The median popularity amongst all movies is $", round(median.pop, 0), sep = "\n",
+                  "The linear correlation between movie popularity and budget is ", round(pop.budget.cor, 3)
+                  )
+           )
   })
   
   
@@ -278,17 +318,7 @@ server <- function(input, output) {
     return(p.produce()) 
   })
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
+
 }
+  
+
