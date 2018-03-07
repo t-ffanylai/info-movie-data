@@ -38,7 +38,7 @@ ui <- fluidPage(
                      "Indonesian" = "id",
                      "Icelandic" = "is",
                      "Italian" = "it",
-                     "Japanese" = "jp",
+                     "Japanese" = "ja",
                      "Korean" = "ko",
                      "Kyrgyz" = "ky",
                      "Dutch" = "nl",
@@ -106,36 +106,6 @@ ui <- fluidPage(
                              most likely to increase as the budget increases.")
                           ),
                   
-                  # Plot and info for analyzing original language and revenue
-                  tabPanel("Original Language",
-                           value = 2,
-                           br(),
-                           h4("This graph plots the revenue of movies by original language."),
-                           plotOutput("language.plot", 
-                                      hover = "language.hover"),
-                           h4(em("Notes about the bar chart")),
-                           em(p("You can view the revenue of movies by original language charted by either the mean or the median."),
-                           p("The number of languages shown can be changed by increasing the input number on the left."),
-                           p("The bar plot outputs languages in alphabetical order. So, when you increase the number of languages shown, the added language
-                             will appear in alphabetical order in relation to the other bars."),
-                           p("If the mean/median shows 0, it is not an error.
-                             There may be several reasons why the revenue was 0. For example, the movies filmed in the language
-                             could have been independent films who did not release in the box office and were uploaded online for free
-                             thus resulting in $0 for revenue.")),
-                           h4("Hover over the bar graph with your mouse to view the revenue at that point."),
-                           em("Values are listed in US dollar"),
-                           verbatimTextOutput("language.info"),
-                           br(),
-                           h4("Analyzing the bar graph"),
-                           p("As the bar chart displays, movies filmed in English generate more revenue than movies filmed in any other language. 
-                             This trend is present when comparing both the mean and median revenues of movies.
-                             This suggests that, in general, movies filmed in English will generate the most revenue when compared to other languages."),
-                           br(),
-                           h4("Viewing statistics for a specific language."),
-                           p("To view individual statistics for a specific language, select the language you want to view from the dropdown box on the left."),
-                           verbatimTextOutput("language.summary")
-                           ), 
-                  
                   # Interactive scatterplot and summary information of movie popularity and revenue 
                   tabPanel("Popularity", 
                            value = 1, 
@@ -174,7 +144,37 @@ ui <- fluidPage(
                             reverse, movies with low revenues can have high popularity. However, the overall trend of the graph indicates that revenue and 
                             popularity are positively correlated, so as popularity increases, so should revenue.")
                            
-                    ), id = "conditionedPanels"
+                    ),                   
+                  # Plot and info for analyzing original language and revenue
+                  tabPanel("Original Language",
+                           value = 2,
+                           br(),
+                           h4("This graph plots the revenue of movies by original language."),
+                           plotOutput("language.plot", 
+                                      hover = "language.hover"),
+                           h4(em("Notes about the bar chart")),
+                           em(p("By default, the first 5 languages who have the highest mean revenue are plotted."),
+                              p("You can view the revenue of movies by original language charted by either the mean or the median."),
+                              p("The number of languages shown can be changed by increasing the input number on the left."),
+                              p("The bar plot outputs languages in alphabetical order. So, when you increase the number of languages shown, the added language
+                             will appear in alphabetical order in relation to the other bars."),
+                              p("If the mean/median shows 0, it is not an error.
+                             There may be several reasons why the revenue was 0. For example, the movies filmed in the language
+                             could have been independent films who did not release in the box office and were uploaded online for free
+                             thus resulting in $0 for revenue.")),
+                           h4("Hover over the bar graph with your mouse to view the revenue at that point."),
+                           em("Values are listed in US dollar"),
+                           verbatimTextOutput("language.info"),
+                           br(),
+                           h4("Analyzing the bar graph"),
+                           p("As the bar chart displays, movies filmed in English generate more revenue than movies filmed in any other language. 
+                             This trend is present when comparing both the mean and median revenues of movies.
+                             This suggests that, in general, movies filmed in English will generate the most revenue when compared to other languages."),
+                           br(),
+                           h4("Viewing statistics for a specific language."),
+                           p("To view individual statistics for a specific language, select the language you want to view from the dropdown box on the left."),
+                           verbatimTextOutput("language.summary")
+                  ), id = "conditionedPanels"
     )
   )
 )

@@ -117,10 +117,17 @@ server <- function(input, output) {
       labs(title = "Movie Language by Revenue",
            x = "original language",
            y = input$language.type) +
-      geom_bar(stat="identity")
+      geom_bar(stat="identity", fill = "#21D17A", color="black") + 
+      geom_text(aes(label=lang.type), vjust=2, color="black", size=3, hjust=0.5) +
+      theme(panel.background = element_blank(),
+            panel.grid.minor = element_blank(),
+            axis.ticks = element_blank(),
+            axis.line = element_line(color=NA),
+            axis.line.x = element_line(color="grey80"))
     return(plot.bar)
   })
   
+  # render what the revenue at the point is
   output$language.info <- renderPrint({
     hover.y <- input$language.hover$y
     return(cat("The revenue at the point you are hovering at is $", hover.y, sep = ""))
