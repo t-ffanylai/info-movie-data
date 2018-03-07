@@ -127,10 +127,32 @@ server <- function(input, output) {
       labs(title = "Movie Language by Revenue",
            x = "original language",
            y = input$language.type) +
-      geom_bar(stat="identity")
+      geom_bar(stat="identity", fill = "#21D17A", color="black") + 
+      geom_text(aes(label=lang.type), vjust=2, color="black", size=3, hjust=0.5) +
+      theme(panel.background = element_blank(),
+            panel.grid.minor = element_blank(),
+            axis.ticks = element_blank(),
+            axis.line = element_line(color=NA),
+            axis.line.x = element_line(color="grey80"))
     return(plot.bar)
   })
   
+  # find the p value for original language
+  p.lang <- reactive ({
+    lang.data <- movie.data %>%
+      select(original_language, revenue)
+    names(lang.data)[1] <- "Language"
+    names(lang.data)[2] <- "type" 
+    p.value <- aov(type ~ Language, data = lang.data)
+    return(summary(p.value))
+  })
+  
+  # render the text for p value
+  output$p.lang <- renderPrint({
+    return(p.lang()) 
+  })
+  
+  # render what the revenue at the point is
   output$language.info <- renderPrint({
     hover.y <- input$language.hover$y
     return(cat("The revenue at the point you are hovering at is $", hover.y, sep = ""))
