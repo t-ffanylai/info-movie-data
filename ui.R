@@ -12,10 +12,11 @@ mycss <- ".irs-bar,
 "
 
 ui <- dashboardPage(skin = "green",
-  dashboardHeader(title = "Movies"),
-  dashboardSidebar(disable = TRUE),
-  dashboardBody(
-    fluidRow(
+      dashboardHeader(title = "Movies"),
+      dashboardSidebar(disable = TRUE),
+      dashboardBody(
+      
+      fluidRow(
       
       ##################
       ####  Graphs  ####
@@ -75,6 +76,7 @@ ui <- dashboardPage(skin = "green",
       
                 )
       ),
+      
       ##################
       ####  Guides  ####
       ##################
@@ -124,17 +126,18 @@ ui <- dashboardPage(skin = "green",
                "For example, the movies filmed in the language could have been independent films that did not release 
                 in the box office and were uploaded online for free, thus resulting in $0 for revenue."
             )
-        ),
+        )
+      ),
         
-        conditionalPanel(
-          condition = "input.graphName == 'Production Country'",
-          box(status = "success",
-              strong("Instructions:"),
-              br(),
-              em("The box below has two slider widgets that allow you to manipulate the range of both the
-               movie revenue and popularity. When you change the range, the summary data (mean, median, range, etc.)
-               will also change, reflecting the statistics of the data in the specified range.")
-          )
+      conditionalPanel(
+        condition = "input.graphName == 'Production Country'",
+        box(status = "success",
+            strong("Instructions:"),
+            br(),
+            em("The box below has two slider widgets that allow you to manipulate the range of both the
+                movie revenue and popularity. When you change the range, the summary data (mean, median, range, etc.)
+                will also change, reflecting the statistics of the data in the specified range.")
+        )
       ),
       
       #####################
@@ -185,28 +188,28 @@ ui <- dashboardPage(skin = "green",
                select the language you want to view from the dropdown box on the left.",
                br(),
                br(),
-               verbatimTextOutput("language.summary")
-            )
-        ),
-        
-        conditionalPanel(
-          condition = "input.graphName == 'Production Country'",
-          box(status = "success",
-              strong("More Information: "),
-              br(),
-              em("Hover over the map with your mouse to view the revenue at that point.",
-                 br(),
-                 br(),
-                 verbatimTextOutput("map.info"),
-                 verbatimTextOutput("country.info"),
-                 br(),
-                 "To view individual statistics for a specific country, 
-               select the language you want to view from the dropdown box on the left.",
-                 br(),
-                 br(),
-                 verbatimTextOutput("country.summary")
-        
+               verbatimTextOutput("language.summary"))
+        )
       ),
+        
+      conditionalPanel(
+        condition = "input.graphName == 'Production Country'",
+        box(status = "success",
+            strong("More Information: "),
+            br(),
+            em("Hover over the map with your mouse to view the revenue at that point.",
+                br(),
+                br(),
+                verbatimTextOutput("map.info"),
+                verbatimTextOutput("country.info"),
+                br(),
+                "To view individual statistics for a specific country, 
+                 select the language you want to view from the dropdown box on the left.",
+                br(),
+                br(),
+                verbatimTextOutput("country.summary"))
+          )
+        ),
 
       ###################
       ####  Widgets  ####
@@ -291,8 +294,7 @@ ui <- dashboardPage(skin = "green",
                           "Vietnamese" = "vi",
                           "Mandarin" = "zh",
                           "Cantonese" = "cn",
-                          "Artistic Language" = "xx"
-                        )           
+                          "Artistic Language" = "xx")           
                       )
         )
       ),

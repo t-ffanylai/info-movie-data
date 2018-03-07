@@ -17,13 +17,6 @@ movie.countries <- movie.countries %>%
   mutate(production_countries = map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
   unnest() 
 
-# Reads movie data from tmdb
-movie.countries <- movie.data[c("original_title", "production_countries", "revenue")]
-# Parses JSON format of the production countries into a dataframe
-movie.countries <- movie.countries %>% 
-  mutate(production_countries = map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
-  unnest()
-
 # Defines server for the movie revenue data app
 server <- function(input, output) {
   options(scipen=8)
@@ -71,7 +64,7 @@ server <- function(input, output) {
                          mean.revenue = round(mean(revenue), 2),
                          median.budget = round(median(budget), 2),
                          median.revenue = round(median(revenue), 2)
-                         )
+    )
     
     range.budget <- range(budget.movie.filter$budget)
     range.revenue <- range(budget.movie.filter$revenue)
@@ -187,7 +180,7 @@ server <- function(input, output) {
            x = "Popularity",  
            y = "Revenue (in US Dollars)") + 
       theme(title = element_text(size=16))
-
+    
   })
   
   # Calcuates mean, median, range, and linear correlation of revenue and popularity data.
@@ -213,8 +206,8 @@ server <- function(input, output) {
                   "The median budget amongst all movies is $", round(median.budget, 0), sep = "\n",
                   "The median popularity amongst all movies is $", round(median.pop, 0), sep = "\n",
                   "The linear correlation between movie popularity and budget is ", round(pop.budget.cor, 3)
-                  )
-           )
+    )
+    )
   })
   
   
@@ -236,8 +229,8 @@ server <- function(input, output) {
   output$pop.info <- renderPrint({
     filtered.pop <- select(movie.data, title, popularity, revenue)
     pop.filtered.data <- nearPoints(filtered.pop, input$pop_hover, 
-                                       maxpoints = 1,
-                                       xvar = "popularity", yvar = "revenue")
+                                    maxpoints = 1,
+                                    xvar = "popularity", yvar = "revenue")
     
     if(dim(pop.filtered.data[0]) != 0) {
       print(pop.filtered.data, row.names = FALSE)
@@ -249,9 +242,9 @@ server <- function(input, output) {
     ggplot(data = map.world) + 
       geom_polygon(aes(x = long, y = lat, group = group), fill = "#21d17a", color = "Green") +
       coord_fixed(1.3) +
-    labs(title = "Map of Production Countries", 
-         x = "Longtitude",  
-         y = "Latitude")
+      labs(title = "Map of Production Countries", 
+           x = "Longtitude",  
+           y = "Latitude")
   })
   
   output$map.info <- renderPrint({
@@ -300,8 +293,8 @@ server <- function(input, output) {
     mean.country <- summarise(country.chosen, avg = mean(country.chosen$revenue)) 
     median.country <- summarise(country.chosen, avg = median(country.chosen$revenue))
     paste0(input$choice.country, " produced total ", num.movie, " movies", sep = "\n",
-          "The country's mean revenue is $", mean.country, sep = "\n",
-          "The country's median revenue is $", median.country)
+           "The country's mean revenue is $", mean.country, sep = "\n",
+           "The country's median revenue is $", median.country)
     
   })
   
@@ -317,8 +310,5 @@ server <- function(input, output) {
   output$p.produce <- renderPrint({
     return(p.produce()) 
   })
-
-
-}
   
-
+}
