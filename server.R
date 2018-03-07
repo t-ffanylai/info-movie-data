@@ -16,6 +16,7 @@ movie.countries <- movie.data[c("original_title", "production_countries", "reven
 movie.countries <- movie.countries %>% 
   mutate(production_countries = map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
   unnest() 
+map.world = ggplot2::map_data("world")
 
 # Defines server for the movie revenue data app
 server <- function(input, output) {
@@ -238,7 +239,6 @@ server <- function(input, output) {
   })
   
   output$prod.map <- renderPlot({
-    map.world = ggplot2::map_data("world")
     ggplot(data = map.world) + 
       geom_polygon(aes(x = long, y = lat, group = group), fill = "#21d17a", color = "Green") +
       coord_fixed(1.3) +
