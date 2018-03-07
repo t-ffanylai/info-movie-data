@@ -5,10 +5,20 @@ library("ggplot2")
 library("maps")
 library("maptools")
 library("ISOcodes")
+library("purrr")
+library("jsonlite")
+library("tidyverse")
 
 # Reads movie data from tmdb
 setwd('~/info-movie-data')
 movie.data <- read.csv('./data/tmdb_5000_movies.csv', stringsAsFactors = FALSE)
+
+# Reads movie data from tmdb
+movie.countries <- movie.data[c("original_title", "production_countries", "revenue")]
+# Parses JSON format of the production countries into a dataframe
+movie.countries <- movie.countries %>% 
+  mutate(production_countries = map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
+  unnest()
 
 # Defines server for the movie revenue data app
 server <- function(input, output) {
@@ -194,4 +204,91 @@ server <- function(input, output) {
     }
   })
   
+  output$prod.map <- renderPlot({
+    map.world = ggplot2::map_data("world")
+    ggplot(data = map.world) + 
+      geom_polygon(aes(x = long, y = lat, group = group), fill = "#21d17a", color = "Green") +
+      coord_fixed(1.3) +
+    labs(title = "Map of Production Countries", 
+         x = "Longtitude",  
+         y = "Latitude")
+  })
+  
+  output$map.info <- renderPrint({
+    filter.country.data <- select(map.world, region, long, lat)
+    chosen.country.info <- nearPoints(filter.country.data, input$map_hover,
+                                      maxpoints = 1, 
+                                      xvar = "long", yvar = "lat")
+    if(dim(chosen.country.info[0]) != 0) {
+      print(chosen.country.info, row.names = FALSE)
+    }
+  })
+  
+  output$country.info <- renderText({
+    filter.country.data <- select(map.world, region, long, lat)
+    chosen.country.info <- nearPoints(filter.country.data, input$map_hover,
+                                      maxpoints = 1, 
+                                      xvar = "long", yvar = "lat")
+    country.name <- chosen.country.info$region
+    final.info <- filter(movie.countries, name == country.name)
+    num.movie <- nrow(final.info)
+    avg.rev <- summarise(final.info, avg = mean(final.info$revenue))
+    return(paste0(country.name, " produced total ", num.movie," movies.", sep = "\n",
+                  "The average revenue ", country.name, " made is $", avg.rev, sep = "\n"))
+  })
+  
+  
+  
+  output$totalprod.summary <- renderText({
+    total.mean <- summarise(movie.countries, avg = mean(movie.countries$revenue))
+    total.median <- summarise(movie.countries, median = median(movie.countries$revenue))
+    highest <- summarise(movie.countries, max = max(movie.countries$revenue))
+    lowest <- summarise(movie.countries, min = min(movie.countries$revenue))
+    
+    return(paste0("There are total 88 countries that have produced movies.", sep = "\n",
+                  "The mean revenue of the movies is $", total.mean, sep = "\n",
+                  "The median revenue of the movies is $", total.median, sep = "\n",
+                  "Highest revenue among the movies is $", highest, sep = "\n",
+                  "Lowest revenue among the movies is $", lowest)
+    )
+  })
+  
+  
+  output$country.summary <- renderText({
+    country.chosen <- filter(movie.countries, name == input$choice.country)
+    num.movie <- nrow(country.chosen)
+    mean.country <- summarise(country.chosen, avg = mean(country.chosen$revenue)) 
+    median.country <- summarise(country.chosen, avg = median(country.chosen$revenue))
+    paste0(input$choice.country, " produced total ", num.movie, " movies", sep = "\n",
+          "The country's mean revenue is $", mean.country, sep = "\n",
+          "The country's median revenue is $", median.country)
+    
+  })
+  
+  p.produce <- reactive ({
+    produce.data <- movie.countries %>%
+      select(name, revenue)
+    names(produce.data)[1] <- "Name"
+    names(produce.data)[2] <- "type" 
+    p.value <- aov(type ~ Name, data = produce.data)
+    return(summary(p.value))
+  })
+  
+  output$p.produce <- renderPrint({
+    return(p.produce()) 
+  })
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    
 }

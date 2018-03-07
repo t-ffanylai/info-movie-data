@@ -72,6 +72,11 @@ ui <- fluidPage(
                            
                            # Filter by revenue value
                            sliderInput("rev", "Revenue", min = 0, max = 4000000000, value = c(min, max))
+                  ),
+                  
+                  conditionalPanel(condition = "input.conditionedPanels==3",
+                                   selectInput("choice.country", "Choose Country:", 
+                                               movie.countries$name)
                   )
       )
       
@@ -137,7 +142,7 @@ ui <- fluidPage(
                            p("To view individual statistics for a specific language, select the language you want to view from the dropdown box on the left."),
                            verbatimTextOutput("language.summary")
                            ),
-                  
+                
                   # Interactive scatterplot and summary information of movie popularity and revenue 
                   tabPanel("Popularity", 
                            value = 1, 
@@ -176,7 +181,39 @@ ui <- fluidPage(
                             reverse, movies with low revenues can have high popularity. However, the overall trend of the graph indicates that revenue and 
                             popularity are positively correlated, so as popularity increases, so should revenue.")
                            
-                    ), id = "conditionedPanels"
+                    ), id = "conditionedPanels",
+                  
+                  tabPanel("Production Country", 
+                           value = 3,
+                           br(),
+                           h4("This map plots the revenue of movies by production countries."),
+                           br(),
+                           strong("Features"),
+                           br(),
+                           em("- By hovering on the map, you can select a specific point (country). On the bottom of the map, you will be 
+                              able to see detailed information about the selected point."),
+                           p("- Using the panel on the left, you can choose a country for more information. 'Selected Country Information' 
+                             part will give additional information about the selected production country."),
+                           plotOutput("prod.map", 
+                                      hover = "map_hover"),
+                           br(),
+                           h4("Selected Country Information"),
+                           verbatimTextOutput("map.info"),
+                           verbatimTextOutput("country.info"),
+                           br(),
+                           h4("Summary"),
+                           verbatimTextOutput("totalprod.summary"),
+                           h4("Selected Country Information"),
+                           verbatimTextOutput("country.summary"),
+                           h4("Correlation"),
+                           verbatimTextOutput("p.produce"),
+                           "From the original dataset, a One Way Analysis of Variance (ANOVA) test was run between
+                           production country and revenue revealing a p-value of 2e-16, which is 0.00000000000000022.
+                           Because the p-value is < 0.05 by large difference, 
+                           production country and revenue can therefore be considered a statistically highly significant factor."
+                           
+                  )
+                  
     )
   )
 )
