@@ -3,12 +3,10 @@ library("dplyr")
 library("shiny")
 library("ggplot2")
 library("maptools")
-<<<<<<< HEAD
+library("jsonlite")
 library("ISOcodes")
-=======
 library("purrr")
 library("tidyr")
->>>>>>> jiyun
 
 # Reads movie data from tmdb
 movie.data <- read.csv('./data/tmdb_5000_movies.csv', stringsAsFactors = FALSE)
@@ -54,18 +52,27 @@ server <- function(input, output) {
   # Returns a summary of the movie data, including the mean, average, 
   # and linear correlation coefficient of the budget and revenue
   output$budget_summary <- renderText({
-    summary <- summarize(movie.data,
+    budget.movie.filter <- movie.data %>%
+      filter(budget > input$budget[1] & budget < input$budget[2]) %>%
+      filter(revenue > input$revenue[1] & revenue < input$revenue[2])
+    summary <- summarize(budget.movie.filter,
                          cor = round(cor(budget, revenue), 3),
                          mean.budget = round(mean(budget), 2),
                          mean.revenue = round(mean(revenue), 2),
                          median.budget = round(median(budget), 2),
                          median.revenue = round(median(revenue), 2)
                          )
-    return(paste0("The average budget is $", summary$mean.budget, ".", sep = "\n",
-                  "The average revenue is $", summary$mean.revenue, ".", sep = "\n",
-                  "The median budget is $", summary$median.budget, ".", sep = "\n",
-                  "The median revenue is $", summary$median.revenue, ".", sep = "\n",
-                  "The linear correlation between movie budget and revenue is ", summary$cor, "."))
+    
+    range.budget <- range(budget.movie.filter$budget)
+    range.revenue <- range(budget.movie.filter$revenue)
+    
+    return(paste0("Movie budgets range from $", range.budget[1], " to $", range.budget[2], sep = "\n",
+                  "Movie revenue range from $", range.revenue[1], " to $", range.revenue[2], sep = "\n",
+                  "The average budget is $", summary$mean.budget, sep = "\n",
+                  "The average revenue is $", summary$mean.revenue, sep = "\n",
+                  "The median budget is $", summary$median.budget, sep = "\n",
+                  "The median revenue is $", summary$median.revenue, sep = "\n",
+                  "The linear correlation between movie budget and revenue is ", summary$cor))
   })
   
   # Prints information about the movie title, budget, and revenue of the hovered point 
@@ -80,7 +87,6 @@ server <- function(input, output) {
     }
   })
   
-<<<<<<< HEAD
   # filters the overall data by original language to find the mean and median revenue of each language
   # as well as number of movies filmed in that language
   language.stats <- reactive ({
@@ -190,13 +196,15 @@ server <- function(input, output) {
     range.budget <- range(pop.mov.filter$budget)
     pop.budget.cor <- cor(pop.mov.filter$popularity, pop.mov.filter$revenue)
     
-    return(paste0("Movie budgets range from ", range.budget[1], " to ", range.budget[2], ".", sep = "\n",
-                  "Movie popularity ranges from ", range.pop[1], " to ", round(range.pop[2], 0), ".", sep = "\n",
-                  "The average budget amongst all movies is ", round(mean.budget, 0), ".", sep = "\n",
-                  "The average popularity amongst all movies is ", round(mean.pop, 0), ".", sep = "\n",
-                  "The median budget amongst all movies is ", round(median.budget, 0), ".", sep = "\n",
-                  "The median popularity amongst all movies is ", round(median.pop, 0), ".", sep = "\n",
-                  "The linear correlation between movie popularity and budget is ", round(pop.budget.cor, 3), "."))
+    return(paste0("Movie budgets range from $", range.budget[1], " to $", range.budget[2], sep = "\n",
+                  "Movie popularity range from $", range.pop[1], " to $", round(range.pop[2], 0), sep = "\n",
+                  "The average budget amongst all movies is $", round(mean.budget, 0), sep = "\n",
+                  "The average popularity amongst all movies is $", round(mean.pop, 0), sep = "\n",
+                  "The median budget amongst all movies is $", round(median.budget, 0), sep = "\n",
+                  "The median popularity amongst all movies is $", round(median.pop, 0), sep = "\n",
+                  "The linear correlation between movie popularity and budget is ", round(pop.budget.cor, 3)
+                  )
+           )
   })
   
   
@@ -226,6 +234,4 @@ server <- function(input, output) {
     }
   })
   
-=======
->>>>>>> jiyun
-}
+
