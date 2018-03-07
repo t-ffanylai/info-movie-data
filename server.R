@@ -233,5 +233,6 @@ server <- function(input, output) {
       print(pop.filtered.data, row.names = FALSE)
     }
   })
+}
   
 
