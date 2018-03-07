@@ -127,6 +127,21 @@ server <- function(input, output) {
     return(plot.bar)
   })
   
+  # find the p value for original language
+  p.lang <- reactive ({
+    lang.data <- movie.data %>%
+      select(original_language, revenue)
+    names(lang.data)[1] <- "Language"
+    names(lang.data)[2] <- "type" 
+    p.value <- aov(type ~ Language, data = lang.data)
+    return(summary(p.value))
+  })
+  
+  # render the text for p value
+  output$p.lang <- renderPrint({
+    return(p.lang()) 
+  })
+  
   # render what the revenue at the point is
   output$language.info <- renderPrint({
     hover.y <- input$language.hover$y
