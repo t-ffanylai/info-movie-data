@@ -81,7 +81,7 @@ ui <- dashboardPage(skin = "green",
       
                 ),
         
-        tabPanel("Overview",
+        tabPanel("Conclusion",
                  h3(strong("The goal of our project was to discover what factors of a movie most impact its revenue.")),
                  br(),
                  div(img(src='movies_photos.png'), style="text-align: center;"),
@@ -326,7 +326,7 @@ ui <- dashboardPage(skin = "green",
             strong("Summary & Analysis: "),
             verbatimTextOutput("budget_summary"),
             br(),
-            "In an overview, with the linear correlation coefficient of 0.705, 
+            "In conclusion, with the linear correlation coefficient of 0.705, 
              there is a strong positive correlation between the movie budget and revenue. 
              Hence, we can assume that the movie revenue is most likely to increase as the budget increases."
         )
@@ -390,7 +390,7 @@ ui <- dashboardPage(skin = "green",
       ######################
       
       conditionalPanel(
-        condition = "input.graphName == 'Overview'",
+        condition = "input.graphName == 'Conclusion'",
         box(status = "success", height = "500px", solidHeader = TRUE,
             title = "Conclusion",
             "Looking at our correlation coefficient and p-values from the data, 
