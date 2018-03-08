@@ -71,7 +71,7 @@ server <- function(input, output) {
     range.revenue <- range(budget.movie.filter$revenue)
     
     return(paste0("Movie budgets range from $", range.budget[1], " to $", range.budget[2], sep = "\n",
-                  "Movie revenue range from $", range.revenue[1], " to $", range.revenue[2], sep = "\n",
+                  "Movie revenue ranges from $", range.revenue[1], " to $", range.revenue[2], sep = "\n",
                   "The average budget is $", summary$mean.budget, sep = "\n",
                   "The average revenue is $", summary$mean.revenue, sep = "\n",
                   "The median budget is $", summary$median.budget, sep = "\n",
@@ -193,20 +193,20 @@ server <- function(input, output) {
     
     #Calcualtes popularity and revenue statistics
     mean.pop <- mean(pop.mov.filter$popularity)
-    mean.budget <- mean(pop.mov.filter$budget)
+    mean.revenue <- mean(pop.mov.filter$revenue)
     median.pop <- median(pop.mov.filter$popularity)
-    median.budget <- median(pop.mov.filter$budget)
+    median.revenue <- median(pop.mov.filter$revenue)
     range.pop <- range(pop.mov.filter$popularity)
-    range.budget <- range(pop.mov.filter$budget)
-    pop.budget.cor <- cor(pop.mov.filter$popularity, pop.mov.filter$revenue)
+    range.revenue <- range(pop.mov.filter$revenue)
+    pop.revenue.cor <- cor(pop.mov.filter$popularity, pop.mov.filter$revenue)
     
-    return(paste0("Movie budgets range from $", range.budget[1], " to $", range.budget[2], sep = "\n",
-                  "Movie popularity range from $", range.pop[1], " to $", round(range.pop[2], 0), sep = "\n",
-                  "The average budget amongst all movies is $", round(mean.budget, 0), sep = "\n",
-                  "The average popularity amongst all movies is $", round(mean.pop, 0), sep = "\n",
-                  "The median budget amongst all movies is $", round(median.budget, 0), sep = "\n",
-                  "The median popularity amongst all movies is $", round(median.pop, 0), sep = "\n",
-                  "The linear correlation between movie popularity and budget is ", round(pop.budget.cor, 3)
+    return(paste0("Movie revenue ranges from $", range.revenue[1], " to $", range.revenue[2], sep = "\n",
+                  "Movie popularity ranges from ", round(range.pop[1], 0), " to ", round(range.pop[2], 0), sep = "\n",
+                  "The average revenue amongst all movies is $", round(mean.revenue, 0), sep = "\n",
+                  "The average popularity amongst all movies is ", round(mean.pop, 0), sep = "\n",
+                  "The median revenue amongst all movies is $", round(median.revenue, 0), sep = "\n",
+                  "The median popularity amongst all movies is ", round(median.pop, 0), sep = "\n",
+                  "The linear correlation between movie popularity and revenue is ", round(pop.revenue.cor, 3)
     )
     )
   })
