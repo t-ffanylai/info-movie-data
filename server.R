@@ -238,6 +238,8 @@ server <- function(input, output) {
     }
   })
   
+  
+  # renders a map to show the revenue of production countries 
   output$prod.map <- renderPlot({
     ggplot(data = map.world) + 
       geom_polygon(aes(x = long, y = lat, group = group), fill = "#21d17a", color = "Green") +
@@ -247,6 +249,7 @@ server <- function(input, output) {
            y = "Latitude")
   })
   
+  # gets the information about the chosen point on the map
   output$map.info <- renderPrint({
     filter.country.data <- select(map.world, region, long, lat)
     chosen.country.info <- nearPoints(filter.country.data, input$map_hover,
@@ -257,6 +260,7 @@ server <- function(input, output) {
     }
   })
   
+  # gets the detailed information about the chosen point on the map
   output$country.info <- renderText({
     filter.country.data <- select(map.world, region, long, lat)
     chosen.country.info <- nearPoints(filter.country.data, input$map_hover,
@@ -264,14 +268,19 @@ server <- function(input, output) {
                                       xvar = "long", yvar = "lat")
     country.name <- chosen.country.info$region
     final.info <- filter(movie.countries, name == country.name)
-    num.movie <- nrow(final.info)
-    avg.rev <- summarise(final.info, avg = mean(final.info$revenue))
+    if(length(final.info) == 0){
+      num.movie = 0  
+      avg.reve = "NA"
+    } else {
+      num.movie <- nrow(final.info)
+      avg.rev <- summarise(final.info, avg = mean(final.info$revenue))  
+    }
     return(paste0(country.name, " produced total ", num.movie," movies.", sep = "\n",
                   "The average revenue ", country.name, " made is $", avg.rev, sep = "\n"))
   })
   
   
-  
+  # Calculates mean and median revenue of the total production countries
   output$totalprod.summary <- renderText({
     total.mean <- summarise(movie.countries, avg = mean(movie.countries$revenue))
     total.median <- summarise(movie.countries, median = median(movie.countries$revenue))
@@ -286,7 +295,7 @@ server <- function(input, output) {
     )
   })
   
-  
+  # Filters statistical information about selected country
   output$country.summary <- renderText({
     country.chosen <- filter(movie.countries, name == input$choice.country)
     num.movie <- nrow(country.chosen)
@@ -298,6 +307,7 @@ server <- function(input, output) {
     
   })
   
+  # Calculates p value of production country and revenue
   p.produce <- reactive ({
     produce.data <- movie.countries %>%
       select(name, revenue)
