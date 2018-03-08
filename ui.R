@@ -15,7 +15,7 @@ movie.css <- ".irs-bar,
           }"
 
 ui <- dashboardPage(skin = "green",
-      dashboardHeader(title = span(tagList(icon("film"), " + ? = $"))),
+      dashboardHeader(title = "Behind the Blockbusters", titleWidth = 400),
       dashboardSidebar(disable = TRUE),
       dashboardBody(
       fluidRow(

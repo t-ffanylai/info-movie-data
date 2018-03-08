@@ -1,0 +1,12 @@
+name: info-movie-data
+title: Info-movie-data
+username:
+account: jyu98-1661808
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 295563
+bundleId: 1258323
+url: https://jyu98-1661808.shinyapps.io/info-movie-data/
+when: 1520482405.13773
+asMultiple: FALSE
+asStatic: FALSE
