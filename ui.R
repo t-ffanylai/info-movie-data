@@ -67,10 +67,13 @@ ui <- dashboardPage(skin = "green",
                             hover = "language.hover")
                 ),
         
+        # world map about production countries and their revenue
         tabPanel("Production Country",
                  "This map plots the revenue of movies by production countries.",
                  br(),
                  br(),
+                 
+                 # Creates map with interactive features
                  plotOutput("prod.map", 
                             hover = "map_hover")
       
@@ -134,15 +137,15 @@ ui <- dashboardPage(skin = "green",
             )
         )
       ),
-        
+      
+      # Creates a box of instructions to interact with the production country vs. revenue visualization   
       conditionalPanel(
         condition = "input.graphName == 'Production Country'",
         box(status = "success",
             strong("Instructions:"),
             br(),
-            em("The box below has two slider widgets that allow you to manipulate the range of both the
-                movie revenue and popularity. When you change the range, the summary data (mean, median, range, etc.)
-                will also change, reflecting the statistics of the data in the specified range.")
+            em("For more information about specific country, there are two ways to get the information."),
+            em("You can either hover over a specific point on the map, or choose a country using the select widget in the box below.")
         )
       ),
       
@@ -197,7 +200,9 @@ ui <- dashboardPage(skin = "green",
                verbatimTextOutput("language.summary"))
         )
       ),
-        
+      
+      # Creates a box of specific country information of a point on the map 
+      # and of selected country
       conditionalPanel(
         condition = "input.graphName == 'Production Country'",
         box(status = "success",
@@ -206,7 +211,6 @@ ui <- dashboardPage(skin = "green",
             em("Hover over the map with your mouse to view the revenue at that point.",
                 br(),
                 br(),
-                verbatimTextOutput("map.info"),
                 verbatimTextOutput("country.info"),
                 br(),
                 "To view individual statistics for a specific country, 
@@ -302,7 +306,20 @@ ui <- dashboardPage(skin = "green",
                           "Cantonese" = "cn",
                           "Artistic Language" = "xx")           
                       )
+        ),
+        
+        # Creates widgets to manipulate production country vs. revenue visualization
+        conditionalPanel(
+          condition = "input.graphName == 'Production Country'",
+            box(status = "success",
+                "Individual Summary Options",
+                # select country for more information
+                selectInput('choice.country', "Choose a Country:",
+                            movie.countries$name)
+                )
         )
+        
+        
       ),
       
       ###################
@@ -339,7 +356,7 @@ ui <- dashboardPage(skin = "green",
         )
       ),
       
-      # Creates a box of statistical summary and analysis of budget vs. revenue plot
+      # Creates a box of statistical summary and analysis of language vs. revenue plot
       conditionalPanel(
         condition = "input.graphName == 'Original Language'",
         box(status = "success",
@@ -359,6 +376,7 @@ ui <- dashboardPage(skin = "green",
         )
       ),
       
+      # Creates a box of statistical summary and analysis of production country vs. revenue plot
       conditionalPanel(
         condition = "input.graphName == 'Production Country'",
         box(status = "success",
