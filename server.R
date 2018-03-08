@@ -7,6 +7,7 @@ library("jsonlite")
 library("ISOcodes")
 library("purrr")
 library("tidyr")
+source('spatial_utils.R')
 
 # Reads movie data from tmdb
 movie.data <- read.csv('./data/tmdb_5000_movies.csv', stringsAsFactors = FALSE)
@@ -248,35 +249,28 @@ server <- function(input, output) {
            x = "Longtitude",  
            y = "Latitude")
   })
-  
-  # gets the information about the chosen point on the map
-  output$map.info <- renderPrint({
-    filter.country.data <- select(map.world, region, long, lat)
-    chosen.country.info <- nearPoints(filter.country.data, input$map_hover,
-                                      maxpoints = 1, 
-                                      xvar = "long", yvar = "lat")
-    if(dim(chosen.country.info[0]) != 0) {
-      print(chosen.country.info, row.names = FALSE)
-    }
-  })
-  
+
   # gets the detailed information about the chosen point on the map
   output$country.info <- renderText({
-    filter.country.data <- select(map.world, region, long, lat)
-    chosen.country.info <- nearPoints(filter.country.data, input$map_hover,
-                                      maxpoints = 1, 
-                                      xvar = "long", yvar = "lat")
-    country.name <- chosen.country.info$region
-    final.info <- filter(movie.countries, name == country.name)
-    if(length(final.info) == 0){
-      num.movie = 0  
-      avg.reve = "NA"
-    } else {
-      num.movie <- nrow(final.info)
-      avg.rev <- summarise(final.info, avg = mean(final.info$revenue))  
-    }
-    return(paste0(country.name, " produced total ", num.movie," movies.", sep = "\n",
-                  "The average revenue ", country.name, " made is $", avg.rev, sep = "\n"))
+    country.name <- GetCountryAtPoint(input$map_hover$x, input$map_hover$y)
+    if(!is.na(country.name)){
+      if(country.name == "USA") {
+        country.name <- "United States of America"
+        final.info <- filter(movie.countries, name == country.name)
+        num.movie <- nrow(final.info)
+        avg.rev <- summarise(final.info, avg = mean(final.info$revenue))
+        median.rev <- summarise(final.info, median = median(final.info$revenue))
+      } else {
+        final.info <- filter(movie.countries, name == country.name)
+        num.movie <- nrow(final.info)
+        avg.rev <- summarise(final.info, avg = mean(final.info$revenue))
+        median.rev <- summarise(final.info, median = median(final.info$revenue))
+      }
+      return(paste0(country.name, " produced total ", num.movie," movies.", sep = "\n",
+                    "The average revenue ", country.name, " made is $", avg.rev, sep = "\n",
+                    "The median revenue of ", country.name, " is $", median.rev, sep = "\n"))
+    }  
+    
   })
   
   
