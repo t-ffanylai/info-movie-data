@@ -12,7 +12,7 @@ mycss <- ".irs-bar,
 "
 
 ui <- dashboardPage(skin = "green",
-      dashboardHeader(title = "Movies"),
+      dashboardHeader(title = span(tagList(icon("film"), " + ? = $"))),
       dashboardSidebar(disable = TRUE),
       dashboardBody(
       
