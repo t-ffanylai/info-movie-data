@@ -397,7 +397,7 @@ ui <- dashboardPage(skin = "green",
              it can be observed that all of the factors we examined were statistically significant.",
             br(),
             br(),
-            "Specifically, between budget and popularity, the linear correlation coefficient was found to be 0.705 and 0.6 respectively. 
+            "Specifically, between budget and popularity, the linear correlation coefficient was found to be 0.705 and 0.606 respectively. 
              While this means that they are both statistically significant, the budget has a stronger positive relationship with the revenue.",
             br(),
             br(),
