@@ -2,7 +2,7 @@
 library(shiny)
 library(shinydashboard)
 
-mycss <- ".irs-bar,
+movie.css <- ".irs-bar,
           .irs-bar-edge,
           .irs-single,
           .irs-grid-pol {
@@ -236,7 +236,7 @@ ui <- dashboardPage(skin = "green",
         condition = "input.graphName == 'Budget'",
         box(status = "success",
             "Filter by:",
-            tags$style(mycss),
+            tags$style(movie.css),
             # Filter by budget value
             sliderInput("budget", "Budget", min = 0, max = 400000000, value = c(min, max)),
             
