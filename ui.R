@@ -27,6 +27,28 @@ ui <- dashboardPage(skin = "green",
       # Creates a box with tabs for the interactive graphs
       tabBox(
         id = "graphName", height = "500px", 
+        
+        # Overview of App
+        tabPanel("Overview",
+                 h4(strong("About")),
+                 "Behind the Blockbuster is a project that analyzes different aspects of over 5,000 movies curated by The Movie Database (TMDB). 
+                 The data contains information about movies from all over the world, providing a large variety of movie data to analyze.",
+                 br(),
+                 "Originally, TMDB based their data off of information collected from the Open Media Database (OMD). 
+                 Like Wikipedia, OMD is curated by users who can submit corrections and additions as they see fit. 
+                 TMDB adopted a similar process and movie lovers have been collecting and submitting data to the database since 2008.",
+                 br(),
+                 br(),
+                 div(img(src='TMDB.png'), style="text-align: center;"),
+                 br(),
+                 strong("The goal of our project specifically is to analyze the budget, popularity, original language and production country 
+                        to discover which factor most impact a movie’s revenue."),
+                 br(),
+                 br(),
+                 h4(strong("Navigation")),
+                 "To navigate through the data that we have selected, you can click the different tabs in the top left corner. 
+                 Each tab will display an individual graph and will provide explanations on how to utilize them in order to view the data at a closer level."
+        ),
 
         # Scatterplot of movie budget vs. revenue
         tabPanel("Budget", 
