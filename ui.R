@@ -9,13 +9,15 @@ mycss <- ".irs-bar,
             background: #21D17A;
             border-color: #21D17A;
           }
-"
+          .content-wrapper,
+          .right-side {
+            background-color: #292929;
+          }"
 
 ui <- dashboardPage(skin = "green",
       dashboardHeader(title = span(tagList(icon("film"), " + ? = $"))),
       dashboardSidebar(disable = TRUE),
       dashboardBody(
-      
       fluidRow(
       
       ##################
@@ -80,9 +82,11 @@ ui <- dashboardPage(skin = "green",
                 ),
         
         tabPanel("Overview",
-                 "This map plots the revenue of movies by production countries.",
+                 h3(strong("The goal of our project was to discover what factors of a movie most impact its revenue.")),
                  br(),
-                 br()
+                 div(img(src='movies_photos.png'), style="text-align: center;"),
+                 br(),
+                 strong("Specifically, we examined the budget, popularity, original language and production country of over 5,000 movies.")
                 )
       ),
       
@@ -202,7 +206,7 @@ ui <- dashboardPage(skin = "green",
       ),
       
       # Creates a box of specific country information of a point on the map 
-      # and of selected country
+      # and of selected country with a widget for selecting a specific country
       conditionalPanel(
         condition = "input.graphName == 'Production Country'",
         box(status = "success",
@@ -214,9 +218,11 @@ ui <- dashboardPage(skin = "green",
                 verbatimTextOutput("country.info"),
                 br(),
                 "To view individual statistics for a specific country, 
-                 select the language you want to view from the dropdown box on the left.",
+                 select the country you want to view from the dropdown box below",
+                "Individual Summary Options",
                 br(),
-                br(),
+                selectInput('choice.country', "Choose a Country:", 
+                            movie.countries$name),
                 verbatimTextOutput("country.summary"))
           )
         ),
@@ -306,20 +312,7 @@ ui <- dashboardPage(skin = "green",
                           "Cantonese" = "cn",
                           "Artistic Language" = "xx")           
                       )
-        ),
-        
-        # Creates widgets to manipulate production country vs. revenue visualization
-        conditionalPanel(
-          condition = "input.graphName == 'Production Country'",
-            box(status = "success",
-                "Individual Summary Options",
-                # select country for more information
-                selectInput('choice.country', "Choose a Country:",
-                            movie.countries$name)
-                )
-        )
-        
-        
+          )
       ),
       
       ###################
@@ -391,6 +384,10 @@ ui <- dashboardPage(skin = "green",
              production country and revenue can therefore be considered a statistically highly significant factor."
         )  
       ),
+      
+      ######################
+      ####  Conclusion  ####
+      ######################
       
       conditionalPanel(
         condition = "input.graphName == 'Overview'",

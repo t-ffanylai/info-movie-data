@@ -15,7 +15,7 @@ movie.countries <- movie.data[c("original_title", "production_countries", "reven
 
 # Parses JSON format of the production countries into a dataframe
 movie.countries <- movie.countries %>% 
-  mutate(production_countries = map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
+  mutate(production_countries = purrr::map(production_countries, ~ fromJSON(.) %>% as.data.frame())) %>% 
   unnest() 
 map.world = ggplot2::map_data("world")
 
@@ -294,9 +294,12 @@ server <- function(input, output) {
     num.movie <- nrow(country.chosen)
     mean.country <- summarise(country.chosen, avg = mean(country.chosen$revenue)) 
     median.country <- summarise(country.chosen, avg = median(country.chosen$revenue))
-    paste0(input$choice.country, " produced total ", num.movie, " movies", sep = "\n",
-           "The country's mean revenue is $", mean.country, sep = "\n",
-           "The country's median revenue is $", median.country)
+    
+    if(dim(country.chosen[0]) != 0) {
+      print(paste0(input$choice.country, " produced total ", num.movie, " movies", sep = "\n",
+             "The country's mean revenue is $", mean.country, sep = "\n",
+             "The country's median revenue is $", median.country))
+    }
     
   })
   
@@ -313,5 +316,4 @@ server <- function(input, output) {
   output$p.produce <- renderPrint({
     return(p.produce()) 
   })
-  
 }
