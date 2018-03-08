@@ -74,6 +74,12 @@ ui <- dashboardPage(skin = "green",
                  plotOutput("prod.map", 
                             hover = "map_hover")
       
+                ),
+        
+        tabPanel("Overview",
+                 "This map plots the revenue of movies by production countries.",
+                 br(),
+                 br()
                 )
       ),
       
@@ -365,6 +371,30 @@ ui <- dashboardPage(skin = "green",
              production country and revenue revealing a p-value of 2e-16, which is 0.00000000000000022.
              Because the p-value is < 0.05 by large difference, 
              production country and revenue can therefore be considered a statistically highly significant factor."
+        )  
+      ),
+      
+      conditionalPanel(
+        condition = "input.graphName == 'Overview'",
+        box(status = "success", height = "500px", solidHeader = TRUE,
+            title = "Conclusion",
+            "Looking at our correlation coefficient and p-values from the data, 
+             it can be observed that all of the factors we examined were statistically significant.",
+            br(),
+            br(),
+            "Specifically, between budget and popularity, the linear correlation coefficient was found to be 0.705 and 0.6 respectively. 
+             While this means that they are both statistically significant, the budget has a stronger positive relationship with the revenue.",
+            br(),
+            br(),
+            "Additionally, we also reviewed how a film’s original language and production country impacted revenue. 
+             We found that the film’s original language had a p-value of 0.041 and the film’s production country had a p-value of 0.00000000000000022. 
+             Since both p-values are less than 0.05, we can reject both null hypotheses that original language and production country have no impact 
+             on the average revenue of movies and the differences are statistically significant. 
+             However, with its smaller p-value, the production company can clearly be seen to have a stronger evidence against its null hypothesis.",
+            br(),
+            br(),
+            "Overall, although correlation does not necessarily mean causation, our findings have determined that the two factors that have the most impact 
+             on revenue are budget and production country. Therefore, it may very well be possible to predict a box office hit by observing these two factors." 
         )  
       )
     )

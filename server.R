@@ -20,7 +20,6 @@ map.world = ggplot2::map_data("world")
 
 # Defines server for the movie revenue data app
 server <- function(input, output) {
-  options(scipen=8)
   ranges <- reactiveValues(x = NULL, y = NULL)
   
   # Creates a scatterplot of the movie budget by its revenue and draws a best line of fit
@@ -240,7 +239,7 @@ server <- function(input, output) {
   
   output$prod.map <- renderPlot({
     ggplot(data = map.world) + 
-      geom_polygon(aes(x = long, y = lat, group = group), fill = "#21d17a", color = "Green") +
+      geom_polygon(aes(x = long, y = lat, group = group), fill = "#21d17a", color = "Black") +
       coord_fixed(1.3) +
       labs(title = "Map of Production Countries", 
            x = "Longtitude",  
@@ -250,7 +249,7 @@ server <- function(input, output) {
   output$map.info <- renderPrint({
     filter.country.data <- select(map.world, region, long, lat)
     chosen.country.info <- nearPoints(filter.country.data, input$map_hover,
-                                      maxpoints = 1, 
+                                      maxpoints = 1, threshold = 5,
                                       xvar = "long", yvar = "lat")
     if(dim(chosen.country.info[0]) != 0) {
       print(chosen.country.info, row.names = FALSE)
@@ -260,7 +259,7 @@ server <- function(input, output) {
   output$country.info <- renderText({
     filter.country.data <- select(map.world, region, long, lat)
     chosen.country.info <- nearPoints(filter.country.data, input$map_hover,
-                                      maxpoints = 1, 
+                                      maxpoints = 1, threshold = 5,
                                       xvar = "long", yvar = "lat")
     country.name <- chosen.country.info$region
     final.info <- filter(movie.countries, name == country.name)
