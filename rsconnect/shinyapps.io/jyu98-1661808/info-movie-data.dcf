@@ -5,8 +5,8 @@ account: jyu98-1661808
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 295563
-bundleId: 1258399
+bundleId: 1292964
 url: https://jyu98-1661808.shinyapps.io/info-movie-data/
-when: 1520486455.29945
+when: 1522300299.77171
 asMultiple: FALSE
 asStatic: FALSE

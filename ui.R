@@ -39,17 +39,12 @@ ui <- dashboardPage(skin = "green",
                  TMDB adopted a similar process and movie lovers have been collecting and submitting data to the database since 2008.",
                  br(),
                  br(),
-                 div(img(src='TMDB.png'), style="text-align: center;"),
+                 div(img(src='tmdb.png'), style="text-align: center;"),
                  br(),
-                 strong("The goal of our project specifically is to analyze the budget, popularity, original language and production country 
-                        to discover which factor most impact a movie’s revenue."),
-                 br(),
-                 br(),
-                 h4(strong("Navigation")),
-                 "To navigate through the data that we have selected, you can click the different tabs in the top left corner. 
-                 Each tab will display an individual graph and will provide explanations on how to utilize them in order to view the data at a closer level."
+                 br()
+                
         ),
-
+        
         # Scatterplot of movie budget vs. revenue
         tabPanel("Budget", 
                  "This graph plots movie budgets by its revenue.", 
@@ -104,17 +99,41 @@ ui <- dashboardPage(skin = "green",
                 ),
         
         tabPanel("Conclusion",
-                 h3(strong("The goal of our project was to discover what factors of a movie most impact its revenue.")),
+                 h4(strong("The goal of our project was to discover what factors of a movie most impact its revenue.")),
                  br(),
-                 div(img(src='movies_photos.png'), style="text-align: center;"),
+                 div(img(src='movie.jpg'), height = "auto", style="text-align: center;"),
                  br(),
-                 strong("Specifically, we examined the budget, popularity, original language and production country of over 5,000 movies.")
+                 "Specifically, we examined the budget, popularity, original language and production country of over 5,000 movies.",
+                 br(),
+                 br()
                 )
       ),
       
       ##################
       ####  Guides  ####
       ##################
+      
+      # Creates a box of instructions to interact with the app in general and additional information
+      conditionalPanel(
+        condition = "input.graphName == 'Overview'",
+        box(status = "success", height = "508px", solidHeader = TRUE,
+            title = "Additional Information",
+            h4(strong("Objective:")),
+            "The goal of our project specifically is to analyze the budget, popularity, 
+             original language and production country to discover which factor most impact a movie’s revenue.", 
+            br(),
+            br(),
+            h4(strong("Navigation:")),
+            "To navigate through the data that we have selected, you can click the different tabs in the top left corner. 
+             Each tab will display an individual graph and will provide explanations on how to utilize them in order to view the data at a closer level.",
+            br(),
+            br(),
+            h4(strong("Audience:")),
+            "The target audience of this analysis were movie production companies,
+             because the data revolves around the critical question of what makes a movie profitable.
+             However, those who are interested in films may find interest in our findings as well."
+        )
+      ),
       
       # Creates a box of instructions to interact with the budget vs. revenue visualization 
       conditionalPanel(
